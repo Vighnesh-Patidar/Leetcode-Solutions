@@ -1,0 +1,47 @@
+class Solution {
+public:
+ListNode* mergeKLists(vector<ListNode*>& lists) {
+    if (lists.empty()) {
+        return nullptr;
+    }
+
+    // Custom comparison function for the priority queue
+    struct CompareNodes {
+        bool operator()(const ListNode* l1, const ListNode* l2) {
+            return l1->val > l2->val;
+        }
+    };
+
+    // Create a priority queue (min-heap)
+    priority_queue<ListNode*, vector<ListNode*>, CompareNodes> minHeap;
+
+    // Initialize the minHeap with the first nodes from each list
+    for (ListNode* node : lists) {
+        if (node) {
+            minHeap.push(node);
+        }
+    }
+
+    // Create a dummy node to simplify list construction
+    ListNode dummy(0);
+    ListNode* current = &dummy;
+
+    while (!minHeap.empty()) {
+        // Get the smallest node from the minHeap
+        ListNode* smallest = minHeap.top();
+        minHeap.pop();
+
+        // Add the smallest node to the result list
+        current->next = smallest;
+        current = current->next;
+
+        // Move to the next node in the list
+        if (smallest->next) {
+            minHeap.push(smallest->next);
+        }
+    }
+
+    return dummy.next;
+}
+
+};
